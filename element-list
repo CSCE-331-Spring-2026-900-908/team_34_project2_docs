@@ -1,0 +1,7 @@
+project2_root
+project2_root.controllers
+project2_root.controllers.ManagerActionsControllers
+project2_root.controllers.OrderInventoryControllers
+project2_root.database
+project2_root.database.entities
+project2_root.models

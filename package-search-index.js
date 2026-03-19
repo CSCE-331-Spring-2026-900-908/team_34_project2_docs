@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"project2_root"},{"l":"project2_root.controllers"},{"l":"project2_root.controllers.ManagerActionsControllers"},{"l":"project2_root.controllers.OrderInventoryControllers"},{"l":"project2_root.database"},{"l":"project2_root.database.entities"},{"l":"project2_root.models"}];updateSearchResults();
