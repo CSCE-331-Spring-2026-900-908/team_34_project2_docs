@@ -96,8 +96,13 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">SQLServerPOSDatabase</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></span></div>
-<div class="block">JDBC-backed <a href="POSDatabase.html" title="interface in project2_root.database"><code>POSDatabase</code></a> implementation used by the JavaFX POS app.
- Wraps SQL queries, simple transaction boundaries, and report aggregation helpers.</div>
+<div class="block">PostgreSQL implementation of <a href="POSDatabase.html" title="interface in project2_root.database"><code>POSDatabase</code></a>.
+
+ <p>All public methods follow a consistent pattern: they delegate to a private
+ <code>attempt*()</code> method that throws <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link"><code>SQLException</code></a>, catch any
+ exception at the public boundary, log it, and return a safe fallback value.
+ Transactional methods disable auto-commit, roll back on failure, and restore
+ auto-commit in a <code>finally</code> block.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -136,20 +141,23 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addIngredient(java.lang.String,double)" class="member-name-link">addIngredient</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  double&nbsp;addCost)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Inserts a new ingredient and returns its generated id.</div>
+<div class="block">Inserts a new ingredient with zero starting stock and returns the
+ generated ID.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItemToOrder(int,project2_root.database.entities.OrderItem)" class="member-name-link">addItemToOrder</a><wbr>(int&nbsp;orderId,
  <a href="entities/OrderItem.html" title="class in project2_root.database.entities">OrderItem</a>&nbsp;item)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds one line item to an order and updates the order total.</div>
+<div class="block">Inserts a line item into the <code>OrderItem</code> table and increments the
+ parent order's running cost by the item's cost.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMenuItem(java.lang.String,double,java.util.Map)" class="member-name-link">addMenuItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  double&nbsp;cost,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;ingredients)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Inserts a new menu item and its ingredient recipe.</div>
+<div class="block">Inserts a new menu item with the given name, cost, and ingredient
+ associations.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canGenerateZReport()" class="member-name-link">canGenerateZReport</a>()</code></div>
@@ -159,34 +167,37 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#close()" class="member-name-link">close</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Closes the active JDBC connection.</div>
+<div class="block">Closes the underlying JDBC connection.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#completeOrder(int)" class="member-name-link">completeOrder</a><wbr>(int&nbsp;orderId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Completes an order.</div>
+<div class="block">No-op.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#confirmOrder(int)" class="member-name-link">confirmOrder</a><wbr>(int&nbsp;orderId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Confirms a restock order and applies its quantities to ingredient stock.</div>
+<div class="block">Marks the given restock order as confirmed and increments ingredient
+ stock levels by the ordered quantities.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#connect(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">connect</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;url,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;password)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Opens the JDBC connection used by this database adapter.</div>
+<div class="block">Opens a JDBC connection to the given PostgreSQL server.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createOrder(int)" class="member-name-link">createOrder</a><wbr>(int&nbsp;employeeId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Creates a new order shell for the given employee.</div>
+<div class="block">Inserts a new order row for the given employee and returns the generated
+ order ID.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#decrementIngredientsForItem(project2_root.database.entities.OrderItem)" class="member-name-link">decrementIngredientsForItem</a><wbr>(<a href="entities/OrderItem.html" title="class in project2_root.database.entities">OrderItem</a>&nbsp;item)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Decrements ingredient stock according to the recipe and quantity of a completed order item.</div>
+<div class="block">Decrements each ingredient's <code>servings_available</code> by the quantity
+ used to make the given order item.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="entities/ZReportSummary.html" title="class in project2_root.database.entities">ZReportSummary</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#finalizeCurrentZReport()" class="member-name-link">finalizeCurrentZReport</a>()</code></div>
@@ -196,17 +207,21 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/Ingredient.html" title="class in project2_root.database.entities">Ingredient</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAllIngredients()" class="member-name-link">getAllIngredients</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns all ingredients currently stored in the ingredient table.</div>
+<div class="block">Returns all ingredients from the <code>ingredient</code> table, ordered by
+ name.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/Ingredient.html" title="class in project2_root.database.entities">Ingredient</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCriticalIngredients(int)" class="member-name-link">getCriticalIngredients</a><wbr>(int&nbsp;weeksToCover)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns ingredients that fall below the projected coverage threshold.</div>
+<div class="block">Returns all ingredients whose current stock falls below the threshold
+ needed to cover the given number of weeks of projected demand, along
+ with a computed recommended restock quantity for each.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/Employee.html" title="class in project2_root.database.entities">Employee</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEmployees()" class="member-name-link">getEmployees</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns all employees currently stored in the employee table.</div>
+<div class="block">Returns all employees from the <code>employee</code> table, ordered by last
+ name ascending.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="entities/HourlySalesRow.html" title="class in project2_root.database.entities">HourlySalesRow</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHourlySalesToday()" class="member-name-link">getHourlySalesToday</a>()</code></div>
@@ -216,28 +231,32 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="entities/ItemIngredient.html" title="class in project2_root.database.entities">ItemIngredient</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIngredientsForMenuItem(int)" class="member-name-link">getIngredientsForMenuItem</a><wbr>(int&nbsp;itemId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns recipe rows for a specific menu item.</div>
+<div class="block">Returns all ingredient associations for a given menu item, including
+ each ingredient's per-unit cost.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="entities/IngredientStock.html" title="class in project2_root.database.entities">IngredientStock</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIngredientStock()" class="member-name-link">getIngredientStock</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns ingredient stock levels for manager inventory views.</div>
+<div class="block">Returns a snapshot of all ingredient stock levels, ordered by
+ <code>servings_available</code> ascending so the lowest-stock items appear first.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/IngredientUsageRow.html" title="class in project2_root.database.entities">IngredientUsageRow</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getIngredientUsage(java.time.LocalDate,java.time.LocalDate)" class="member-name-link">getIngredientUsage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;start,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;end)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns ingredient usage totals between two dates.</div>
+<div class="block">Returns total ingredient servings consumed by completed orders whose
+ creation date falls within [<code>start</code>, <code>end</code>] inclusive,
+ ordered by servings used descending.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="entities/MenuItem.html" title="class in project2_root.database.entities">MenuItem</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMenuItemById(int)" class="member-name-link">getMenuItemById</a><wbr>(int&nbsp;itemId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Loads a menu item's basic fields by id.</div>
+<div class="block">Returns a single menu item by ID.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/MenuItem.html" title="class in project2_root.database.entities">MenuItem</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMenuItems()" class="member-name-link">getMenuItems</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns all menu items currently available in the item table.</div>
+<div class="block">Returns all menu items from the <code>item</code> table, ordered by name.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOrderCountToday()" class="member-name-link">getOrderCountToday</a>()</code></div>
@@ -247,30 +266,35 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/OrderItem.html" title="class in project2_root.database.entities">OrderItem</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOrderItems(int)" class="member-name-link">getOrderItems</a><wbr>(int&nbsp;orderId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns all persisted line items for a given order.</div>
+<div class="block">Returns all line items belonging to the given order, with item names
+ joined from the <code>item</code> table.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a><wbr>&lt;<a href="entities/RestockOrder.html" title="class in project2_root.database.entities">RestockOrder</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRestockOrders()" class="member-name-link">getRestockOrders</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns all restock orders currently stored in the database.</div>
+<div class="block">Returns all restock orders with their line items, ordered by date descending.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="entities/TimeBucketSales.html" title="class in project2_root.database.entities">TimeBucketSales</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSalesBetween(java.time.LocalDate,java.time.LocalDate,boolean)" class="member-name-link">getSalesBetween</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate,
  boolean&nbsp;weekly)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns sales totals between two dates using either weekly or monthly buckets.</div>
+<div class="block">Returns aggregated sales totals bucketed by week or month for the given
+ date range.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="entities/ItemSalesRow.html" title="class in project2_root.database.entities">ItemSalesRow</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSalesByItemBetween(java.time.LocalDate,java.time.LocalDate)" class="member-name-link">getSalesByItemBetween</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns item-level sales totals between two dates.</div>
+<div class="block">Returns item-level sales totals (quantity sold and revenue) for all
+ orders whose creation date falls within the given range, ordered by
+ revenue descending.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="entities/ItemSalesRow.html" title="class in project2_root.database.entities">ItemSalesRow</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSalesByItemToday()" class="member-name-link">getSalesByItemToday</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns item-level sales totals since the last generated Z-report.</div>
+<div class="block">Returns item-level sales totals since the last generated Z-report,
+ ordered by revenue descending.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTotalSalesToday()" class="member-name-link">getTotalSalesToday</a>()</code></div>
@@ -285,7 +309,8 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeOrderItem(int)" class="member-name-link">removeOrderItem</a><wbr>(int&nbsp;orderItemId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Removes a line item and subtracts its cost from the parent order total.</div>
+<div class="block">Deletes a single order item by ID and subtracts its cost from the
+ parent order's running total.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveEmployee(int,java.lang.String,java.lang.String,boolean)" class="member-name-link">saveEmployee</a><wbr>(int&nbsp;employeeId,
@@ -293,7 +318,7 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;lastName,
  boolean&nbsp;isManager)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Updates an employee's basic profile and manager flag.</div>
+<div class="block">Updates an existing employee's name and manager status.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveMenuItem(int,java.lang.String,double,java.util.Map)" class="member-name-link">saveMenuItem</a><wbr>(int&nbsp;id,
@@ -301,12 +326,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
  double&nbsp;cost,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;ingredients)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Updates a menu item and replaces its ingredient recipe.</div>
+<div class="block">Updates an existing menu item's name and cost, then replaces all of its
+ ingredient associations with the provided map.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#submitRestockOrder(java.util.Map)" class="member-name-link">submitRestockOrder</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;ingredientQuantities)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Creates a new restock order with one row per requested ingredient.</div>
+<div class="block">Creates a new pending restock order with the given ingredient quantities.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="entities/Employee.html" title="class in project2_root.database.entities">Employee</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#validateLogin(int,java.lang.String)" class="member-name-link">validateLogin</a><wbr>(int&nbsp;employeeId,
@@ -351,10 +377,10 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">connect</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;url,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;password)</span></div>
-<div class="block">Opens the JDBC connection used by this database adapter.</div>
+<div class="block">Opens a JDBC connection to the given PostgreSQL server.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>url</code> - the JDBC connection URL</dd>
+<dd><code>url</code> - the JDBC connection URL including host and database name</dd>
 <dd><code>user</code> - the database username</dd>
 <dd><code>password</code> - the database password</dd>
 </dl>
@@ -364,7 +390,8 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="close()">
 <h3>close</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">close</span>()</div>
-<div class="block">Closes the active JDBC connection.</div>
+<div class="block">Closes the underlying JDBC connection. Should be called when the
+ application shuts down.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html#close()" title="class or interface in java.lang" class="external-link">close</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code></dd>
@@ -381,10 +408,11 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#validateLogin(int,java.lang.String)">validateLogin</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>employeeId</code> - the employee id to authenticate</dd>
+<dd><code>employeeId</code> - the employee ID to authenticate</dd>
 <dd><code>password</code> - the password to verify</dd>
 <dt>Returns:</dt>
-<dd>the matching employee when authentication succeeds, or empty otherwise</dd>
+<dd>the matching <a href="entities/Employee.html" title="class in project2_root.database.entities"><code>Employee</code></a> when authentication succeeds,
+         or empty otherwise</dd>
 </dl>
 </section>
 </li>
@@ -392,12 +420,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getMenuItems()">
 <h3>getMenuItems</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/MenuItem.html" title="class in project2_root.database.entities">MenuItem</a>&gt;</span>&nbsp;<span class="element-name">getMenuItems</span>()</div>
-<div class="block">Returns all menu items currently available in the item table.</div>
+<div class="block">Returns all menu items from the <code>item</code> table, ordered by name.
+ Ingredient associations are not loaded here; an empty map is used instead.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getMenuItems()">getMenuItems</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>menu items ordered by name</dd>
+<dd>a collection of all <a href="entities/MenuItem.html" title="class in project2_root.database.entities"><code>MenuItem</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -405,14 +434,16 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="createOrder(int)">
 <h3>createOrder</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">createOrder</span><wbr><span class="parameters">(int&nbsp;employeeId)</span></div>
-<div class="block">Creates a new order shell for the given employee.</div>
+<div class="block">Inserts a new order row for the given employee and returns the generated
+ order ID. The order is created with a cost of zero; item costs are
+ accumulated as items are added via <a href="#addItemToOrder(int,project2_root.database.entities.OrderItem)"><code>addItemToOrder(int, project2_root.database.entities.OrderItem)</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#createOrder(int)">createOrder</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>employeeId</code> - the employee creating the order</dd>
+<dd><code>employeeId</code> - the ID of the employee placing the order</dd>
 <dt>Returns:</dt>
-<dd>the new order id, or <code>-1</code> when creation fails</dd>
+<dd>the generated order ID, or <code>-1</code> on failure</dd>
 </dl>
 </section>
 </li>
@@ -421,13 +452,14 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <h3>addItemToOrder</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItemToOrder</span><wbr><span class="parameters">(int&nbsp;orderId,
  <a href="entities/OrderItem.html" title="class in project2_root.database.entities">OrderItem</a>&nbsp;item)</span></div>
-<div class="block">Adds one line item to an order and updates the order total.</div>
+<div class="block">Inserts a line item into the <code>OrderItem</code> table and increments the
+ parent order's running cost by the item's cost.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#addItemToOrder(int,project2_root.database.entities.OrderItem)">addItemToOrder</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>orderId</code> - the order receiving the item</dd>
-<dd><code>item</code> - the line item to persist</dd>
+<dd><code>orderId</code> - the ID of the order to add the item to</dd>
+<dd><code>item</code> - the order item to insert, including quantity and customizations</dd>
 </dl>
 </section>
 </li>
@@ -435,12 +467,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getRestockOrders()">
 <h3>getRestockOrders</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/RestockOrder.html" title="class in project2_root.database.entities">RestockOrder</a>&gt;</span>&nbsp;<span class="element-name">getRestockOrders</span>()</div>
-<div class="block">Returns all restock orders currently stored in the database.</div>
+<div class="block">Returns all restock orders with their line items, ordered by date descending.
+ Results are assembled by grouping flat join rows by order ID.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getRestockOrders()">getRestockOrders</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>restock orders ordered by most recent first</dd>
+<dd>a collection of <a href="entities/RestockOrder.html" title="class in project2_root.database.entities"><code>RestockOrder</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -448,14 +481,17 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getCriticalIngredients(int)">
 <h3>getCriticalIngredients</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/Ingredient.html" title="class in project2_root.database.entities">Ingredient</a>&gt;</span>&nbsp;<span class="element-name">getCriticalIngredients</span><wbr><span class="parameters">(int&nbsp;weeksToCover)</span></div>
-<div class="block">Returns ingredients that fall below the projected coverage threshold.</div>
+<div class="block">Returns all ingredients whose current stock falls below the threshold
+ needed to cover the given number of weeks of projected demand, along
+ with a computed recommended restock quantity for each.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getCriticalIngredients(int)">getCriticalIngredients</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>weeksToCover</code> - the number of weeks of projected usage to cover</dd>
+<dd><code>weeksToCover</code> - the number of weeks of demand the stock must cover</dd>
 <dt>Returns:</dt>
-<dd>critical ingredients ordered by current stock ascending</dd>
+<dd>a collection of critical <a href="entities/Ingredient.html" title="class in project2_root.database.entities"><code>Ingredient</code></a> records ordered by
+         stock level ascending, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -463,12 +499,14 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getAllIngredients()">
 <h3>getAllIngredients</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/Ingredient.html" title="class in project2_root.database.entities">Ingredient</a>&gt;</span>&nbsp;<span class="element-name">getAllIngredients</span>()</div>
-<div class="block">Returns all ingredients currently stored in the ingredient table.</div>
+<div class="block">Returns all ingredients from the <code>ingredient</code> table, ordered by
+ name. <code>recommendedRestockQty</code> is set to zero since it is not
+ computed here.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getAllIngredients()">getAllIngredients</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>all ingredients ordered by name</dd>
+<dd>a collection of all <a href="entities/Ingredient.html" title="class in project2_root.database.entities"><code>Ingredient</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -476,12 +514,15 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="submitRestockOrder(java.util.Map)">
 <h3>submitRestockOrder</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">submitRestockOrder</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;ingredientQuantities)</span></div>
-<div class="block">Creates a new restock order with one row per requested ingredient.</div>
+<div class="block">Creates a new pending restock order with the given ingredient quantities.
+ The unit cost for each line item is read directly from the ingredient
+ table at the time of insertion.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#submitRestockOrder(java.util.Map)">submitRestockOrder</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>ingredientQuantities</code> - ingredient ids mapped to requested quantities</dd>
+<dd><code>ingredientQuantities</code> - a map of ingredient ID to ordered quantity;
+                             should contain only non-zero entries</dd>
 </dl>
 </section>
 </li>
@@ -489,12 +530,14 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="confirmOrder(int)">
 <h3>confirmOrder</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">confirmOrder</span><wbr><span class="parameters">(int&nbsp;orderId)</span></div>
-<div class="block">Confirms a restock order and applies its quantities to ingredient stock.</div>
+<div class="block">Marks the given restock order as confirmed and increments ingredient
+ stock levels by the ordered quantities. Both updates are executed in a
+ single transaction.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#confirmOrder(int)">confirmOrder</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>orderId</code> - the restock order to confirm</dd>
+<dd><code>orderId</code> - the ID of the restock order to confirm</dd>
 </dl>
 </section>
 </li>
@@ -505,15 +548,17 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  double&nbsp;cost,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;ingredients)</span></div>
-<div class="block">Updates a menu item and replaces its ingredient recipe.</div>
+<div class="block">Updates an existing menu item's name and cost, then replaces all of its
+ ingredient associations with the provided map.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#saveMenuItem(int,java.lang.String,double,java.util.Map)">saveMenuItem</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>id</code> - the menu item id</dd>
+<dd><code>id</code> - the ID of the menu item to update</dd>
 <dd><code>name</code> - the updated item name</dd>
-<dd><code>cost</code> - the updated base price</dd>
-<dd><code>ingredients</code> - ingredient ids mapped to required quantities</dd>
+<dd><code>cost</code> - the updated price</dd>
+<dd><code>ingredients</code> - a map of ingredient ID to quantity; zero-quantity
+                    entries should be filtered out before calling</dd>
 </dl>
 </section>
 </li>
@@ -523,14 +568,15 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addMenuItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  double&nbsp;cost,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;&nbsp;ingredients)</span></div>
-<div class="block">Inserts a new menu item and its ingredient recipe.</div>
+<div class="block">Inserts a new menu item with the given name, cost, and ingredient
+ associations.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#addMenuItem(java.lang.String,double,java.util.Map)">addMenuItem</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>name</code> - the new item name</dd>
-<dd><code>cost</code> - the new item base price</dd>
-<dd><code>ingredients</code> - ingredient ids mapped to required quantities</dd>
+<dd><code>name</code> - the name of the new item</dd>
+<dd><code>cost</code> - the price of the new item</dd>
+<dd><code>ingredients</code> - a map of ingredient ID to quantity</dd>
 </dl>
 </section>
 </li>
@@ -538,12 +584,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getEmployees()">
 <h3>getEmployees</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/Employee.html" title="class in project2_root.database.entities">Employee</a>&gt;</span>&nbsp;<span class="element-name">getEmployees</span>()</div>
-<div class="block">Returns all employees currently stored in the employee table.</div>
+<div class="block">Returns all employees from the <code>employee</code> table, ordered by last
+ name ascending.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getEmployees()">getEmployees</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>employee records ordered by last name</dd>
+<dd>a collection of all <a href="entities/Employee.html" title="class in project2_root.database.entities"><code>Employee</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -554,15 +601,15 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;lastName,
  boolean&nbsp;isManager)</span></div>
-<div class="block">Updates an employee's basic profile and manager flag.</div>
+<div class="block">Updates an existing employee's name and manager status.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#saveEmployee(int,java.lang.String,java.lang.String,boolean)">saveEmployee</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>employeeId</code> - the employee id to update</dd>
+<dd><code>employeeId</code> - the ID of the employee to update</dd>
 <dd><code>firstName</code> - the updated first name</dd>
 <dd><code>lastName</code> - the updated last name</dd>
-<dd><code>isManager</code> - the updated manager flag</dd>
+<dd><code>isManager</code> - whether the employee should have manager privileges</dd>
 </dl>
 </section>
 </li>
@@ -570,14 +617,15 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getOrderItems(int)">
 <h3>getOrderItems</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/OrderItem.html" title="class in project2_root.database.entities">OrderItem</a>&gt;</span>&nbsp;<span class="element-name">getOrderItems</span><wbr><span class="parameters">(int&nbsp;orderId)</span></div>
-<div class="block">Returns all persisted line items for a given order.</div>
+<div class="block">Returns all line items belonging to the given order, with item names
+ joined from the <code>item</code> table.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getOrderItems(int)">getOrderItems</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>orderId</code> - the order whose items should be loaded</dd>
+<dd><code>orderId</code> - the ID of the order whose items to retrieve</dd>
 <dt>Returns:</dt>
-<dd>order line items for the requested order</dd>
+<dd>a collection of <a href="entities/OrderItem.html" title="class in project2_root.database.entities"><code>OrderItem</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -585,12 +633,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="removeOrderItem(int)">
 <h3>removeOrderItem</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeOrderItem</span><wbr><span class="parameters">(int&nbsp;orderItemId)</span></div>
-<div class="block">Removes a line item and subtracts its cost from the parent order total.</div>
+<div class="block">Deletes a single order item by ID and subtracts its cost from the
+ parent order's running total.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#removeOrderItem(int)">removeOrderItem</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>orderItemId</code> - the line-item id to remove</dd>
+<dd><code>orderItemId</code> - the ID of the order item to remove</dd>
 </dl>
 </section>
 </li>
@@ -598,12 +647,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="completeOrder(int)">
 <h3>completeOrder</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">completeOrder</span><wbr><span class="parameters">(int&nbsp;orderId)</span></div>
-<div class="block">Completes an order. This implementation is a no-op because completion state is not persisted.</div>
+<div class="block">No-op. Order completion is handled in memory and does not require a
+ database update in the current implementation.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#completeOrder(int)">completeOrder</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>orderId</code> - the completed order id</dd>
+<dd><code>orderId</code> - the ID of the order being completed</dd>
 </dl>
 </section>
 </li>
@@ -611,12 +661,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getIngredientStock()">
 <h3>getIngredientStock</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="entities/IngredientStock.html" title="class in project2_root.database.entities">IngredientStock</a>&gt;</span>&nbsp;<span class="element-name">getIngredientStock</span>()</div>
-<div class="block">Returns ingredient stock levels for manager inventory views.</div>
+<div class="block">Returns a snapshot of all ingredient stock levels, ordered by
+ <code>servings_available</code> ascending so the lowest-stock items appear first.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getIngredientStock()">getIngredientStock</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>ingredient stock rows ordered by servings available</dd>
+<dd>a list of <a href="entities/IngredientStock.html" title="class in project2_root.database.entities"><code>IngredientStock</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -626,14 +677,14 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addEmployee</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;firstName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;lastName,
  boolean&nbsp;isManager)</span></div>
-<div class="block">Inserts a new employee record.</div>
+<div class="block">Inserts a new employee record. The employee ID is assigned by the database.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#addEmployee(java.lang.String,java.lang.String,boolean)">addEmployee</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>firstName</code> - the employee first name</dd>
-<dd><code>lastName</code> - the employee last name</dd>
-<dd><code>isManager</code> - whether the employee is a manager</dd>
+<dd><code>firstName</code> - the new employee's first name</dd>
+<dd><code>lastName</code> - the new employee's last name</dd>
+<dd><code>isManager</code> - whether the new employee should have manager privileges</dd>
 </dl>
 </section>
 </li>
@@ -643,16 +694,19 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="entities/TimeBucketSales.html" title="class in project2_root.database.entities">TimeBucketSales</a>&gt;</span>&nbsp;<span class="element-name">getSalesBetween</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate,
  boolean&nbsp;weekly)</span></div>
-<div class="block">Returns sales totals between two dates using either weekly or monthly buckets.</div>
+<div class="block">Returns aggregated sales totals bucketed by week or month for the given
+ date range. Uses <code>DATE_TRUNC</code> to align bucket boundaries and an
+ exclusive upper bound to match the inclusive end date.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getSalesBetween(java.time.LocalDate,java.time.LocalDate,boolean)">getSalesBetween</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>startDate</code> - the inclusive start date</dd>
-<dd><code>endDate</code> - the inclusive end date</dd>
-<dd><code>weekly</code> - whether to use weekly rather than monthly aggregation</dd>
+<dd><code>startDate</code> - the inclusive start of the date range</dd>
+<dd><code>endDate</code> - the inclusive end of the date range</dd>
+<dd><code>weekly</code> - <code>true</code> to bucket by week, <code>false</code> to bucket by month</dd>
 <dt>Returns:</dt>
-<dd>aggregated sales buckets for the requested range</dd>
+<dd>a list of <a href="entities/TimeBucketSales.html" title="class in project2_root.database.entities"><code>TimeBucketSales</code></a> rows ordered by bucket start date,
+         or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -661,15 +715,17 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <h3>getSalesByItemBetween</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="entities/ItemSalesRow.html" title="class in project2_root.database.entities">ItemSalesRow</a>&gt;</span>&nbsp;<span class="element-name">getSalesByItemBetween</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate)</span></div>
-<div class="block">Returns item-level sales totals between two dates.</div>
+<div class="block">Returns item-level sales totals (quantity sold and revenue) for all
+ orders whose creation date falls within the given range, ordered by
+ revenue descending.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getSalesByItemBetween(java.time.LocalDate,java.time.LocalDate)">getSalesByItemBetween</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>startDate</code> - the inclusive start date</dd>
-<dd><code>endDate</code> - the inclusive end date</dd>
+<dd><code>startDate</code> - the inclusive start of the date range</dd>
+<dd><code>endDate</code> - the inclusive end of the date range</dd>
 <dt>Returns:</dt>
-<dd>item sales rows ordered by revenue descending</dd>
+<dd>a list of <a href="entities/ItemSalesRow.html" title="class in project2_root.database.entities"><code>ItemSalesRow</code></a> records, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -678,15 +734,16 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <h3>addIngredient</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">addIngredient</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  double&nbsp;addCost)</span></div>
-<div class="block">Inserts a new ingredient and returns its generated id.</div>
+<div class="block">Inserts a new ingredient with zero starting stock and returns the
+ generated ID.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#addIngredient(java.lang.String,double)">addIngredient</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>name</code> - the ingredient name</dd>
-<dd><code>addCost</code> - the ingredient add-on cost</dd>
+<dd><code>addCost</code> - the per-unit restock cost</dd>
 <dt>Returns:</dt>
-<dd>the new ingredient id, or <code>-1</code> when insertion fails</dd>
+<dd>the generated ingredient ID, or <code>-1</code> on failure</dd>
 </dl>
 </section>
 </li>
@@ -694,14 +751,15 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getMenuItemById(int)">
 <h3>getMenuItemById</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="entities/MenuItem.html" title="class in project2_root.database.entities">MenuItem</a></span>&nbsp;<span class="element-name">getMenuItemById</span><wbr><span class="parameters">(int&nbsp;itemId)</span></div>
-<div class="block">Loads a menu item's basic fields by id.</div>
+<div class="block">Returns a single menu item by ID. Ingredient associations are not loaded;
+ an empty map is used instead.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getMenuItemById(int)">getMenuItemById</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - the menu item id to load</dd>
+<dd><code>itemId</code> - the ID of the menu item to retrieve</dd>
 <dt>Returns:</dt>
-<dd>the menu item, or <code>null</code> when not found</dd>
+<dd>the matching <a href="entities/MenuItem.html" title="class in project2_root.database.entities"><code>MenuItem</code></a>, or <code>null</code> if not found or on error</dd>
 </dl>
 </section>
 </li>
@@ -709,12 +767,14 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="decrementIngredientsForItem(project2_root.database.entities.OrderItem)">
 <h3>decrementIngredientsForItem</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">decrementIngredientsForItem</span><wbr><span class="parameters">(<a href="entities/OrderItem.html" title="class in project2_root.database.entities">OrderItem</a>&nbsp;item)</span></div>
-<div class="block">Decrements ingredient stock according to the recipe and quantity of a completed order item.</div>
+<div class="block">Decrements each ingredient's <code>servings_available</code> by the quantity
+ used to make the given order item. The decrement per ingredient is
+ <code>orderItem.quantity * itemingredient.quantity</code>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#decrementIngredientsForItem(project2_root.database.entities.OrderItem)">decrementIngredientsForItem</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>item</code> - the completed order item whose ingredients should be decremented</dd>
+<dd><code>item</code> - the order item whose ingredient consumption should be applied</dd>
 </dl>
 </section>
 </li>
@@ -753,7 +813,7 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getHourlySalesToday()">getHourlySalesToday</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>hourly sales rows for the active business day</dd>
+<dd>hourly sales rows for the active business day, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -761,12 +821,13 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getSalesByItemToday()">
 <h3>getSalesByItemToday</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="entities/ItemSalesRow.html" title="class in project2_root.database.entities">ItemSalesRow</a>&gt;</span>&nbsp;<span class="element-name">getSalesByItemToday</span>()</div>
-<div class="block">Returns item-level sales totals since the last generated Z-report.</div>
+<div class="block">Returns item-level sales totals since the last generated Z-report,
+ ordered by revenue descending.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getSalesByItemToday()">getSalesByItemToday</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>item sales rows for the active business day, ordered by revenue</dd>
+<dd>item sales rows for the active business day, or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -792,7 +853,8 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#finalizeCurrentZReport()">finalizeCurrentZReport</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>the stored Z-report summary, or a fallback summary when insertion fails</dd>
+<dd>the stored <a href="entities/ZReportSummary.html" title="class in project2_root.database.entities"><code>ZReportSummary</code></a>, or a fallback summary when
+         insertion fails</dd>
 </dl>
 </section>
 </li>
@@ -805,7 +867,8 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getZReportHistory()">getZReportHistory</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Returns:</dt>
-<dd>previously generated Z-report summaries</dd>
+<dd>previously generated <a href="entities/ZReportSummary.html" title="class in project2_root.database.entities"><code>ZReportSummary</code></a> records,
+         or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -814,15 +877,18 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <h3>getIngredientUsage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="entities/IngredientUsageRow.html" title="class in project2_root.database.entities">IngredientUsageRow</a>&gt;</span>&nbsp;<span class="element-name">getIngredientUsage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;start,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;end)</span></div>
-<div class="block">Returns ingredient usage totals between two dates.</div>
+<div class="block">Returns total ingredient servings consumed by completed orders whose
+ creation date falls within [<code>start</code>, <code>end</code>] inclusive,
+ ordered by servings used descending.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getIngredientUsage(java.time.LocalDate,java.time.LocalDate)">getIngredientUsage</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>start</code> - the inclusive start date</dd>
-<dd><code>end</code> - the inclusive end date</dd>
+<dd><code>start</code> - the inclusive start date of the query window</dd>
+<dd><code>end</code> - the inclusive end date of the query window</dd>
 <dt>Returns:</dt>
-<dd>ingredient usage rows ordered by servings used descending</dd>
+<dd>a collection of <a href="entities/IngredientUsageRow.html" title="class in project2_root.database.entities"><code>IngredientUsageRow</code></a> records,
+         or an empty list on error</dd>
 </dl>
 </section>
 </li>
@@ -830,14 +896,17 @@ implements <a href="POSDatabase.html" title="interface in project2_root.database
 <section class="detail" id="getIngredientsForMenuItem(int)">
 <h3>getIngredientsForMenuItem</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="entities/ItemIngredient.html" title="class in project2_root.database.entities">ItemIngredient</a>&gt;</span>&nbsp;<span class="element-name">getIngredientsForMenuItem</span><wbr><span class="parameters">(int&nbsp;itemId)</span></div>
-<div class="block">Returns recipe rows for a specific menu item.</div>
+<div class="block">Returns all ingredient associations for a given menu item, including
+ each ingredient's per-unit cost.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="POSDatabase.html#getIngredientsForMenuItem(int)">getIngredientsForMenuItem</a></code>&nbsp;in interface&nbsp;<code><a href="POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - the menu item whose ingredients should be loaded</dd>
+<dd><code>itemId</code> - the ID of the menu item whose ingredients to retrieve</dd>
 <dt>Returns:</dt>
-<dd>ingredient rows for the requested menu item</dd>
+<dd>a list of <a href="entities/ItemIngredient.html" title="class in project2_root.database.entities"><code>ItemIngredient</code></a> records, one per ingredient</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></code> - wrapping <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link"><code>SQLException</code></a> if the query fails</dd>
 </dl>
 </section>
 </li>

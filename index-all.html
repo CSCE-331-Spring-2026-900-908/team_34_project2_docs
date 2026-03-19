@@ -70,7 +70,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#addIngredient(java.lang.String,double)" class="member-name-link">addIngredient(String, double)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Inserts a new ingredient and returns its generated id.</div>
+<div class="block">Inserts a new ingredient with zero starting stock and returns the
+ generated ID.</div>
 </dd>
 <dt><a href="project2_root/models/OrderInventoryModel.html#addIngredient(java.lang.String,double)" class="member-name-link">addIngredient(String, double)</a> - Method in class project2_root.models.<a href="project2_root/models/OrderInventoryModel.html" title="class in project2_root.models">OrderInventoryModel</a></dt>
 <dd>
@@ -86,7 +87,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#addItemToOrder(int,project2_root.database.entities.OrderItem)" class="member-name-link">addItemToOrder(int, OrderItem)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Adds one line item to an order and updates the order total.</div>
+<div class="block">Inserts a line item into the <code>OrderItem</code> table and increments the
+ parent order's running cost by the item's cost.</div>
 </dd>
 <dt><a href="project2_root/database/POSDatabase.html#addMenuItem(java.lang.String,double,java.util.Map)" class="member-name-link">addMenuItem(String, double, Map&lt;Integer, Integer&gt;)</a> - Method in interface project2_root.database.<a href="project2_root/database/POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></dt>
 <dd>
@@ -94,7 +96,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#addMenuItem(java.lang.String,double,java.util.Map)" class="member-name-link">addMenuItem(String, double, Map&lt;Integer, Integer&gt;)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Inserts a new menu item and its ingredient recipe.</div>
+<div class="block">Inserts a new menu item with the given name, cost, and ingredient
+ associations.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerActionsModel.html#addMenuItem(java.lang.String,double,java.util.Map)" class="member-name-link">addMenuItem(String, double, Map&lt;Integer, Integer&gt;)</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerActionsModel.html" title="class in project2_root.models">ManagerActionsModel</a></dt>
 <dd>
@@ -143,7 +146,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#close()" class="member-name-link">close()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Closes the active JDBC connection.</div>
+<div class="block">Closes the underlying JDBC connection.</div>
 </dd>
 <dt><a href="project2_root/models/OrderPageModel.html#completeCurrentOrder(int)" class="member-name-link">completeCurrentOrder(int)</a> - Method in class project2_root.models.<a href="project2_root/models/OrderPageModel.html" title="class in project2_root.models">OrderPageModel</a></dt>
 <dd>
@@ -162,7 +165,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#completeOrder(int)" class="member-name-link">completeOrder(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Completes an order.</div>
+<div class="block">No-op.</div>
 </dd>
 <dt><a href="project2_root/database/POSDatabase.html#confirmOrder(int)" class="member-name-link">confirmOrder(int)</a> - Method in interface project2_root.database.<a href="project2_root/database/POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></dt>
 <dd>
@@ -170,7 +173,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#confirmOrder(int)" class="member-name-link">confirmOrder(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Confirms a restock order and applies its quantities to ingredient stock.</div>
+<div class="block">Marks the given restock order as confirmed and increments ingredient
+ stock levels by the ordered quantities.</div>
 </dd>
 <dt><a href="project2_root/models/OrderInventoryModel.html#confirmOrder(int)" class="member-name-link">confirmOrder(int)</a> - Method in class project2_root.models.<a href="project2_root/models/OrderInventoryModel.html" title="class in project2_root.models">OrderInventoryModel</a></dt>
 <dd>
@@ -183,7 +187,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#connect(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">connect(String, String, String)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Opens the JDBC connection used by this database adapter.</div>
+<div class="block">Opens a JDBC connection to the given PostgreSQL server.</div>
 </dd>
 <dt><a href="project2_root/controllers/Controller.html" class="type-name-link" title="interface in project2_root.controllers">Controller</a> - Interface in <a href="project2_root/controllers/package-summary.html">project2_root.controllers</a></dt>
 <dd>
@@ -203,7 +207,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#createOrder(int)" class="member-name-link">createOrder(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Creates a new order shell for the given employee.</div>
+<div class="block">Inserts a new order row for the given employee and returns the generated
+ order ID.</div>
 </dd>
 <dt><a href="project2_root/controllers/OrderInventoryControllers/CreateOrderController.html" class="type-name-link" title="class in project2_root.controllers.OrderInventoryControllers">CreateOrderController</a> - Class in <a href="project2_root/controllers/OrderInventoryControllers/package-summary.html">project2_root.controllers.OrderInventoryControllers</a></dt>
 <dd>
@@ -224,7 +229,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#decrementIngredientsForItem(project2_root.database.entities.OrderItem)" class="member-name-link">decrementIngredientsForItem(OrderItem)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Decrements ingredient stock according to the recipe and quantity of a completed order item.</div>
+<div class="block">Decrements each ingredient's <code>servings_available</code> by the quantity
+ used to make the given order item.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:E">E</h2>
@@ -301,7 +307,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getAllIngredients()" class="member-name-link">getAllIngredients()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns all ingredients currently stored in the ingredient table.</div>
+<div class="block">Returns all ingredients from the <code>ingredient</code> table, ordered by
+ name.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerActionsModel.html#getAllIngredients()" class="member-name-link">getAllIngredients()</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerActionsModel.html" title="class in project2_root.models">ManagerActionsModel</a></dt>
 <dd>
@@ -350,7 +357,9 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getCriticalIngredients(int)" class="member-name-link">getCriticalIngredients(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns ingredients that fall below the projected coverage threshold.</div>
+<div class="block">Returns all ingredients whose current stock falls below the threshold
+ needed to cover the given number of weeks of projected demand, along
+ with a computed recommended restock quantity for each.</div>
 </dd>
 <dt><a href="project2_root/AppSession.html#getCurrentEmployee()" class="member-name-link">getCurrentEmployee()</a> - Method in class project2_root.<a href="project2_root/AppSession.html" title="class in project2_root">AppSession</a></dt>
 <dd>
@@ -380,7 +389,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getEmployees()" class="member-name-link">getEmployees()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns all employees currently stored in the employee table.</div>
+<div class="block">Returns all employees from the <code>employee</code> table, ordered by last
+ name ascending.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerActionsModel.html#getEmployees()" class="member-name-link">getEmployees()</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerActionsModel.html" title="class in project2_root.models">ManagerActionsModel</a></dt>
 <dd>
@@ -446,7 +456,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getIngredientsForMenuItem(int)" class="member-name-link">getIngredientsForMenuItem(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns recipe rows for a specific menu item.</div>
+<div class="block">Returns all ingredient associations for a given menu item, including
+ each ingredient's per-unit cost.</div>
 </dd>
 <dt><a href="project2_root/database/POSDatabase.html#getIngredientStock()" class="member-name-link">getIngredientStock()</a> - Method in interface project2_root.database.<a href="project2_root/database/POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></dt>
 <dd>
@@ -454,7 +465,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getIngredientStock()" class="member-name-link">getIngredientStock()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns ingredient stock levels for manager inventory views.</div>
+<div class="block">Returns a snapshot of all ingredient stock levels, ordered by
+ <code>servings_available</code> ascending so the lowest-stock items appear first.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerModel.html#getIngredientStock()" class="member-name-link">getIngredientStock()</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerModel.html" title="class in project2_root.models">ManagerModel</a></dt>
 <dd>
@@ -466,7 +478,9 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getIngredientUsage(java.time.LocalDate,java.time.LocalDate)" class="member-name-link">getIngredientUsage(LocalDate, LocalDate)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns ingredient usage totals between two dates.</div>
+<div class="block">Returns total ingredient servings consumed by completed orders whose
+ creation date falls within [<code>start</code>, <code>end</code>] inclusive,
+ ordered by servings used descending.</div>
 </dd>
 <dt><a href="project2_root/models/ProductUsageModel.html#getIngredientUsage(java.time.LocalDate,java.time.LocalDate)" class="member-name-link">getIngredientUsage(LocalDate, LocalDate)</a> - Method in class project2_root.models.<a href="project2_root/models/ProductUsageModel.html" title="class in project2_root.models">ProductUsageModel</a></dt>
 <dd>
@@ -504,7 +518,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getMenuItemById(int)" class="member-name-link">getMenuItemById(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Loads a menu item's basic fields by id.</div>
+<div class="block">Returns a single menu item by ID.</div>
 </dd>
 <dt><a href="project2_root/database/POSDatabase.html#getMenuItems()" class="member-name-link">getMenuItems()</a> - Method in interface project2_root.database.<a href="project2_root/database/POSDatabase.html" title="interface in project2_root.database">POSDatabase</a></dt>
 <dd>
@@ -512,7 +526,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getMenuItems()" class="member-name-link">getMenuItems()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns all menu items currently available in the item table.</div>
+<div class="block">Returns all menu items from the <code>item</code> table, ordered by name.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerActionsModel.html#getMenuItems()" class="member-name-link">getMenuItems()</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerActionsModel.html" title="class in project2_root.models">ManagerActionsModel</a></dt>
 <dd>
@@ -566,7 +580,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getOrderItems(int)" class="member-name-link">getOrderItems(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns all persisted line items for a given order.</div>
+<div class="block">Returns all line items belonging to the given order, with item names
+ joined from the <code>item</code> table.</div>
 </dd>
 <dt><a href="project2_root/models/OrderPageModel.html#getOrderItems(int)" class="member-name-link">getOrderItems(int)</a> - Method in class project2_root.models.<a href="project2_root/models/OrderPageModel.html" title="class in project2_root.models">OrderPageModel</a></dt>
 <dd>
@@ -595,7 +610,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getRestockOrders()" class="member-name-link">getRestockOrders()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns all restock orders currently stored in the database.</div>
+<div class="block">Returns all restock orders with their line items, ordered by date descending.</div>
 </dd>
 <dt><a href="project2_root/models/OrderInventoryModel.html#getRestockOrders()" class="member-name-link">getRestockOrders()</a> - Method in class project2_root.models.<a href="project2_root/models/OrderInventoryModel.html" title="class in project2_root.models">OrderInventoryModel</a></dt>
 <dd>
@@ -611,7 +626,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getSalesBetween(java.time.LocalDate,java.time.LocalDate,boolean)" class="member-name-link">getSalesBetween(LocalDate, LocalDate, boolean)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns sales totals between two dates using either weekly or monthly buckets.</div>
+<div class="block">Returns aggregated sales totals bucketed by week or month for the given
+ date range.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerModel.html#getSalesBetween(java.time.LocalDate,java.time.LocalDate,boolean)" class="member-name-link">getSalesBetween(LocalDate, LocalDate, boolean)</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerModel.html" title="class in project2_root.models">ManagerModel</a></dt>
 <dd>
@@ -623,7 +639,9 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getSalesByItemBetween(java.time.LocalDate,java.time.LocalDate)" class="member-name-link">getSalesByItemBetween(LocalDate, LocalDate)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns item-level sales totals between two dates.</div>
+<div class="block">Returns item-level sales totals (quantity sold and revenue) for all
+ orders whose creation date falls within the given range, ordered by
+ revenue descending.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerModel.html#getSalesByItemBetween(java.time.LocalDate,java.time.LocalDate)" class="member-name-link">getSalesByItemBetween(LocalDate, LocalDate)</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerModel.html" title="class in project2_root.models">ManagerModel</a></dt>
 <dd>
@@ -635,7 +653,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#getSalesByItemToday()" class="member-name-link">getSalesByItemToday()</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Returns item-level sales totals since the last generated Z-report.</div>
+<div class="block">Returns item-level sales totals since the last generated Z-report,
+ ordered by revenue descending.</div>
 </dd>
 <dt><a href="project2_root/models/XReportModel.html#getSalesByItemToday()" class="member-name-link">getSalesByItemToday()</a> - Method in class project2_root.models.<a href="project2_root/models/XReportModel.html" title="class in project2_root.models">XReportModel</a></dt>
 <dd>
@@ -1000,7 +1019,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#removeOrderItem(int)" class="member-name-link">removeOrderItem(int)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Removes a line item and subtracts its cost from the parent order total.</div>
+<div class="block">Deletes a single order item by ID and subtracts its cost from the
+ parent order's running total.</div>
 </dd>
 <dt><a href="project2_root/models/OrderPageModel.html#removeOrderItem(int)" class="member-name-link">removeOrderItem(int)</a> - Method in class project2_root.models.<a href="project2_root/models/OrderPageModel.html" title="class in project2_root.models">OrderPageModel</a></dt>
 <dd>
@@ -1027,7 +1047,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#saveEmployee(int,java.lang.String,java.lang.String,boolean)" class="member-name-link">saveEmployee(int, String, String, boolean)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Updates an employee's basic profile and manager flag.</div>
+<div class="block">Updates an existing employee's name and manager status.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerActionsModel.html#saveEmployee(int,java.lang.String,java.lang.String,boolean)" class="member-name-link">saveEmployee(int, String, String, boolean)</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerActionsModel.html" title="class in project2_root.models">ManagerActionsModel</a></dt>
 <dd>
@@ -1039,7 +1059,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#saveMenuItem(int,java.lang.String,double,java.util.Map)" class="member-name-link">saveMenuItem(int, String, double, Map&lt;Integer, Integer&gt;)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Updates a menu item and replaces its ingredient recipe.</div>
+<div class="block">Updates an existing menu item's name and cost, then replaces all of its
+ ingredient associations with the provided map.</div>
 </dd>
 <dt><a href="project2_root/models/ManagerActionsModel.html#saveMenuItem(int,java.lang.String,double,java.util.Map)" class="member-name-link">saveMenuItem(int, String, double, Map&lt;Integer, Integer&gt;)</a> - Method in class project2_root.models.<a href="project2_root/models/ManagerActionsModel.html" title="class in project2_root.models">ManagerActionsModel</a></dt>
 <dd>
@@ -1195,7 +1216,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html" class="type-name-link" title="class in project2_root.database">SQLServerPOSDatabase</a> - Class in <a href="project2_root/database/package-summary.html">project2_root.database</a></dt>
 <dd>
-<div class="block">JDBC-backed <a href="project2_root/database/POSDatabase.html" title="interface in project2_root.database"><code>POSDatabase</code></a> implementation used by the JavaFX POS app.</div>
+<div class="block">PostgreSQL implementation of <a href="project2_root/database/POSDatabase.html" title="interface in project2_root.database"><code>POSDatabase</code></a>.</div>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#%3Cinit%3E()" class="member-name-link">SQLServerPOSDatabase()</a> - Constructor for class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>&nbsp;</dd>
@@ -1209,7 +1230,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="project2_root/database/SQLServerPOSDatabase.html#submitRestockOrder(java.util.Map)" class="member-name-link">submitRestockOrder(Map&lt;Integer, Integer&gt;)</a> - Method in class project2_root.database.<a href="project2_root/database/SQLServerPOSDatabase.html" title="class in project2_root.database">SQLServerPOSDatabase</a></dt>
 <dd>
-<div class="block">Creates a new restock order with one row per requested ingredient.</div>
+<div class="block">Creates a new pending restock order with the given ingredient quantities.</div>
 </dd>
 <dt><a href="project2_root/models/OrderInventoryModel.html#submitRestockOrder(java.util.Map)" class="member-name-link">submitRestockOrder(Map&lt;Integer, Integer&gt;)</a> - Method in class project2_root.models.<a href="project2_root/models/OrderInventoryModel.html" title="class in project2_root.models">OrderInventoryModel</a></dt>
 <dd>
